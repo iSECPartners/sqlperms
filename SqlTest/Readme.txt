@@ -1,0 +1,1 @@
+﻿This test project was intended to try to supported automating the permutation testing. It was a reasonable initial effort but is by no means complete. The corresponding TestSql CLR project begins implementation of many SQLCLR types to be used by this framework for performing tests.

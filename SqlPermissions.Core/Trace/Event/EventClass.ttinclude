@@ -1,0 +1,290 @@
+﻿<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Xml.XPath" #>
+<#+
+class EventClass : Template
+{
+	public String Namespace
+	{
+		get { return _namespace; }
+		set { _namespace = value; }
+	}
+	private String _namespace;
+
+	public Int32 Id
+	{
+		get { return _id; }
+		set { _id = value; }
+	}
+	private Int32 _id;
+
+	public String ClassName
+	{
+		get { return _className; }
+		set { _className = value; }
+	}
+	private String _className;
+
+	public String Name
+	{
+		get { return _name; }
+		set { _name = value; }
+	}
+	private String _name;
+
+	public IEnumerable<Member> Members
+	{
+		get { return _members; }
+		set { _members = value; }
+	}
+	private IEnumerable<Member> _members;
+
+	
+	public override String TransformText()
+	{
+#>
+using System;
+using System.Data;
+using System.Diagnostics.Contracts;
+using System.Text;
+
+using SqlPermissions.Core.Utility;
+
+namespace <#= Namespace #>
+{
+	public partial class <#= ClassName #> : AbstractEventBase
+	{
+		internal <#= ClassName #>(IDataRecord record, <#= ClassName #>LoaderInfo loaderInfo)
+		{
+			Contract.Requires(null != record, "The record must be valid.");
+			Contract.Requires(null != loaderInfo, "The loaderInfo must be valid.");
+
+<#+		foreach (var m in Members.Where(m => !"EventClass".Equals(m.Name, StringComparison.Ordinal))) 
+		{ 
+			String rightVal;
+			String initLine = String.Empty;
+			if (DbType.Binary == m.DbType)
+			{
+				rightVal = "(Byte[])record.GetValue(loaderInfo." + m.Name + "Ordinal.Value)";
+			}
+			else
+			{
+				var nativeType = m.NativeType;
+				if ('?' == nativeType[nativeType.Length - 1])
+					nativeType = nativeType.Substring(0, nativeType.Length - 1);
+
+				rightVal = String.Format(CultureInfo.InvariantCulture, "record.GetNullable{0}(loaderInfo.{1}Ordinal.Value)", nativeType, m.Name);
+			}
+#>
+			if (null != loaderInfo.<#= m.Name #>Ordinal)
+<#= initLine #>				<#= m.FieldName #> = <#= rightVal #>;
+<#+		} #>
+		}
+
+		public override String Name
+		{ get { return EventName; } }
+		private const String EventName = "<#= Name #>";
+
+		public override Int32 Id
+		{ get { return EventId; } }
+		private const Int32 EventId = <#= Id #>;
+
+<#+		foreach (var m in Members.Where(m => !"EventClass".Equals(m.Name, StringComparison.Ordinal))) { #>
+		
+		public <#= m.Override #> <#= m.NativeType #> <#= m.Name #>
+		{
+			get { return <#= m.FieldName #>; }
+			set { <#= m.FieldName #> = value; }
+		}
+		private <#= m.NativeType #> <#= m.FieldName #>;
+<#+		} #>
+
+		public override String ToString()
+		{
+			const Boolean IsDetailed = false;
+			return ToString(IsDetailed);
+		}
+
+		public override String ToString(bool isDetailed)
+		{
+			const String Line1 = "Event Class: <#= Name #> (<#= ClassName #>)";
+
+			// return the short version if requested
+			if (!isDetailed)
+				return Line1;
+
+			const Int32 ExpectedCapacity = 0x100;
+			var sb = new StringBuilder(ExpectedCapacity);
+
+			sb.AppendLine(Line1);
+
+			sb.AppendLine("\tEventClassId: <#= Id #>");
+<#+		foreach (var m in Members.Where(m => !"EventClass".Equals(m.Name, StringComparison.Ordinal))) { 
+			var isString = String.Equals("String", m.FieldName, StringComparison.Ordinal);
+			var isBinary = DbType.Binary == m.DbType;
+
+			var stringFormatter = isString ? "{0}" : !isBinary ? "Convert.ToString({0})" : "null != {0} ? \"0x\" + BitConverter.ToString({0}).Replace(\"-\", String.Empty) : \"\"";
+
+			var valueToken = String.Format(CultureInfo.InvariantCulture, stringFormatter, m.Name);
+#>
+			sb.Append("\t<#= m.Name #>: ").AppendLine(<#= valueToken #>);
+<#+		} #>
+
+			return sb.ToString();
+		}
+	}
+}
+
+<#+
+		return GenerationEnvironment.ToString();
+	}
+}
+
+class Member
+{
+	private static String[] _interfaceCommonMembers = { "DatabaseID", "LoginName", "NTUserName", "NTDomainName", "TextData" };
+
+	public DbType DbType
+	{
+		get { return _dbType; }
+		set { _dbType = value; }
+	}
+	private DbType _dbType;
+
+	public String NativeType
+	{
+		get { return TranslateToNative(DbType); }
+	}
+
+	public String MemberName
+	{
+		get { return _memberName; }
+		set { _memberName = value; }
+	}
+	private String _memberName;
+
+	public String Name
+	{
+		get { return _name; }
+		set { _name = value; }
+	}
+	private String _name;
+
+	public String Override
+	{
+		get {
+			String value = "";
+
+            if (Member._interfaceCommonMembers.Contains<String>(this.Name))
+            {
+                value = "override";
+            }
+
+			return value;
+		}
+	}
+
+	public String FieldName
+	{
+		get { return "_" + new String(new [] { Char.ToLowerInvariant(Name[0]) }) + Name.Substring(1); }
+	}
+
+      private static readonly Dictionary<DbType, Type> DbTypeMap = new Dictionary<DbType, Type>
+        { 
+            // strings
+            { DbType.AnsiString, typeof(String) },
+            { DbType.AnsiStringFixedLength, typeof(String) },
+            { DbType.String, typeof(String) },
+            { DbType.StringFixedLength, typeof(String) },
+            { DbType.Xml, typeof(String) },
+
+            // binary
+            { DbType.Binary, typeof(Byte[]) },
+
+            // time
+            { DbType.Date, typeof(DateTime) },
+            { DbType.DateTime, typeof(DateTime) },
+            { DbType.DateTime2, typeof(DateTime) },
+            { DbType.Time, typeof(DateTime) },
+            { DbType.DateTimeOffset, typeof(DateTimeOffset) },
+
+            // misc
+            { DbType.Boolean, typeof(Boolean) },
+            { DbType.Currency, typeof(Decimal) },
+            { DbType.Decimal, typeof(Decimal) },
+            { DbType.VarNumeric, typeof(Decimal) },
+            { DbType.Guid, typeof(Guid) },
+            { DbType.Object, typeof(Object) },
+
+            // integers
+            { DbType.Byte, typeof(Byte) },
+            { DbType.Int16, typeof(Int16) },
+            { DbType.Int32, typeof(Int32) },
+            { DbType.Int64, typeof(Int64) },
+            { DbType.SByte, typeof(SByte) },
+            { DbType.UInt16, typeof(UInt16) },
+            { DbType.UInt32, typeof(UInt32) },
+            { DbType.UInt64, typeof(UInt64) },
+
+            // floating point numbers
+            { DbType.Single, typeof(Single) },
+            { DbType.Double, typeof(Double) },
+        };
+
+	public String TranslateToNative(DbType dbType)
+	{
+		var type = DbTypeMap[dbType];
+		return type.IsValueType ? type.Name + "?" : type.Name;
+	}
+}
+
+class ClassFactory
+{
+	public static IEnumerable<EventClass> BuildClasses(string dataPath, string ns)
+	{
+		var doc = XDocument.Load(dataPath);
+
+		var columns = doc.XPathSelectElements("//Generator/Columns/Column");
+		
+		var classes = doc.XPathSelectElements("//Generator/EventClasses/EventClass");
+
+ 	    return (from cls in classes
+ 	           select new EventClass
+ 	            {
+                    Namespace = ns,
+					Id = (Int32)cls.Attribute("Id"),
+					Name = (String)cls.Attribute("Name"),
+                    ClassName = (String)cls.Attribute("ClassName"),
+                    Members = (from colElem in cls.Elements("Col")
+ 	                            join columnElem in columns on (Int32) colElem.Attribute("Id") equals (Int32) columnElem.Attribute("ColId")
+                                select new Member
+                                        {
+                                            DbType = ToDbType((String)columnElem.Attribute("ColType")),
+                                            Name = (String)columnElem.Attribute("MemberName"),
+											MemberName = (String)columnElem.Attribute("ColName"),
+                                        }).ToArray()
+ 	            }).ToArray();
+	}
+
+	private static DbType ToDbType(string sqlType)
+	{
+		var type = (SqlDbType)Enum.Parse(typeof(SqlDbType), sqlType, true);
+		
+		var p = new SqlParameter
+		{
+			SqlDbType = type
+		};
+
+		return p.DbType;
+	}
+}
+#>

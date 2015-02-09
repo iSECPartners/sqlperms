@@ -1,0 +1,539 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BD315528-39F9-4EBF-B312-CA7A1F46FE6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SqlPermissions.Core</RootNamespace>
+    <AssemblyName>SqlPermissions.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.ConnectionInfoExtended, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.1.30214.0\lib\Net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.1.30214.0\lib\Net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.1.30214.0\lib\Net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.1.30214.0\lib\Net45\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Permissions\AccessType.cs" />
+    <Compile Include="Permissions\EmptyAccessStatement.cs" />
+    <Compile Include="Permissions\SqlObjectLongTypes.cs">
+      <DependentUpon>SqlObjectLongTypes.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Permissions\SqlObjectLongType.cs">
+      <DependentUpon>SqlObjectLongType.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Permissions\GenericAccessStatement.cs" />
+    <Compile Include="Permissions\IAccessStatement.cs" />
+    <Compile Include="Permissions\phPrincipal.cs" />
+    <Compile Include="Permissions\SecurableObject.cs" />
+    <Compile Include="Permissions\SecurableObjectType.cs" />
+    <Compile Include="Permissions\SqlObjectType.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlObjectType.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Permissions\SqlPermission.cs" />
+    <Compile Include="Permissions\UnimplementedAccessStatement.cs" />
+    <Compile Include="Permissions\SqlPermissionName.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlPermissionName.g.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Permissions\SqlPermissionNames.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlPermissionNames.g.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Trace\Event\AddDbUserEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddDbUserEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddLoginEvent.cs" />
+    <Compile Include="Trace\Event\AddLoginEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddLoginEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddLoginToServerRoleEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddLoginToServerRoleEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddMemberToDbRoleEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddMemberToDbRoleEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddRoleEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AddRoleEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AppRoleChangePasswordEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AppRoleChangePasswordEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginEvent.cs" />
+    <Compile Include="Trace\Event\BackupRestoreEvent.cs" />
+    <Compile Include="Trace\Event\BackupRestoreEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\BackupRestoreEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\BrokerConversationEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\BrokerConversationEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\BrokerLoginEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\BrokerLoginEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ChangeAuditEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ChangeAuditEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ChangeDatabaseOwnerEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ChangeDatabaseOwnerEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseManagementEvent.cs" />
+    <Compile Include="Trace\Event\DatabaseManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseMirroringLoginEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseMirroringLoginEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectAccessEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectAccessEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectManagementEvent.cs" />
+    <Compile Include="Trace\Event\DatabaseObjectManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectTakeOwnershipEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseObjectTakeOwnershipEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseOperationEvent.cs" />
+    <Compile Include="Trace\Event\DatabaseOperationEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseOperationEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabasePrincipalImpersonationEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabasePrincipalImpersonationEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabasePrincipalManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabasePrincipalManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseScopeGdrEvent.cs" />
+    <Compile Include="Trace\Event\DatabaseScopeGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DatabaseScopeGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\DbccEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\AbstractEventBase.cs" />
+    <Compile Include="Trace\Event\DbccEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\EventClasses.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\EventClassLoaderInfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\EventClassLoaderInfoBase.cs" />
+    <Compile Include="Trace\Event\EventFactory.cs" />
+    <Compile Include="Trace\Event\EventFactory.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EventFactory.g.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\FulltextEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\FulltextEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\IEventBase.cs" />
+    <Compile Include="Trace\Event\LoginChangePasswordEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginChangePasswordEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginChangePropertyEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginChangePropertyEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginFailedEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginFailedEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LoginGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LogoutEvent.cs" />
+    <Compile Include="Trace\Event\LogoutEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\LogoutEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ObjectDerivedPermissionEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ObjectDerivedPermissionEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectAccessEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectAccessEvent.cs" />
+    <Compile Include="Trace\Event\SchemaObjectAccessEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectGdrEvent.cs" />
+    <Compile Include="Trace\Event\SchemaObjectGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectManagementEvent.cs" />
+    <Compile Include="Trace\Event\SchemaObjectManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectTakeOwnershipEvent.cs" />
+    <Compile Include="Trace\Event\SchemaObjectTakeOwnershipEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\SchemaObjectTakeOwnershipEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerAlterTraceEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerAlterTraceEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectTakeOwnershipEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerObjectTakeOwnershipEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerOperationEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerOperationEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerPrincipalImpersonationEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerPrincipalImpersonationEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerPrincipalManagementEvent.cs" />
+    <Compile Include="Trace\Event\ServerPrincipalManagementEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerPrincipalManagementEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerScopeGdrEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerScopeGdrEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerStartAndStopEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\ServerStartAndStopEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\StatementPermissionEvent.g.cs">
+      <DependentUpon>EventClasses.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\Event\StatementPermissionEventLoaderInfo.g.cs">
+      <DependentUpon>EventClassLoaderInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Trace\TraceSource.cs" />
+    <Compile Include="Utility\DataExtensions.cs" />
+    <Compile Include="Utility\ExceptionEx.cs" />
+    <Compile Include="Utility\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Permissions\SqlPermissionName.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlPermissionName.g.cs</LastGenOutput>
+      <LastOutputs>.\SqlPermissionName.g.cs</LastOutputs>
+    </None>
+    <None Include="Permissions\SqlPermissionNames.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlPermissionNames.g.cs</LastGenOutput>
+      <LastOutputs>.\SqlPermissionNames.g.cs</LastOutputs>
+    </None>
+    <None Include="Permissions\SqlObjectLongTypes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlObjectLongTypes.cs</LastGenOutput>
+      <LastOutputs>.\SqlObjectLongTypes.cs</LastOutputs>
+    </None>
+    <None Include="Permissions\SqlObjectLongType.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlObjectLongType.cs</LastGenOutput>
+      <LastOutputs>.\SqlObjectLongType.cs</LastOutputs>
+    </None>
+    <None Include="Permissions\SqlObjectType.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlObjectType.cs</LastGenOutput>
+      <LastOutputs>.\SqlObjectType.cs</LastOutputs>
+    </None>
+    <None Include="Trace\Event\EventClass.ttinclude" />
+    <None Include="Trace\Event\EventClasses.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EventClasses.cs</LastGenOutput>
+      <LastOutputs>
+.\AddDbUserEvent.g.cs
+.\AddLoginEvent.g.cs
+.\AddLoginToServerRoleEvent.g.cs
+.\AddMemberToDbRoleEvent.g.cs
+.\AddRoleEvent.g.cs
+.\AppRoleChangePasswordEvent.g.cs
+.\BackupRestoreEvent.g.cs
+.\BrokerConversationEvent.g.cs
+.\BrokerLoginEvent.g.cs
+.\ChangeAuditEvent.g.cs
+.\ChangeDatabaseOwnerEvent.g.cs
+.\DatabaseManagementEvent.g.cs
+.\DatabaseMirroringLoginEvent.g.cs
+.\DatabaseObjectAccessEvent.g.cs
+.\DatabaseObjectGdrEvent.g.cs
+.\DatabaseObjectManagementEvent.g.cs
+.\DatabaseObjectTakeOwnershipEvent.g.cs
+.\DatabaseOperationEvent.g.cs
+.\DatabasePrincipalImpersonationEvent.g.cs
+.\DatabasePrincipalManagementEvent.g.cs
+.\DatabaseScopeGdrEvent.g.cs
+.\DbccEvent.g.cs
+.\EventClasses.cs
+.\FulltextEvent.g.cs
+.\LoginChangePasswordEvent.g.cs
+.\LoginChangePropertyEvent.g.cs
+.\LoginEvent.g.cs
+.\LoginFailedEvent.g.cs
+.\LoginGdrEvent.g.cs
+.\LogoutEvent.g.cs
+.\ObjectDerivedPermissionEvent.g.cs
+.\SchemaObjectAccessEvent.g.cs
+.\SchemaObjectGdrEvent.g.cs
+.\SchemaObjectManagementEvent.g.cs
+.\SchemaObjectTakeOwnershipEvent.g.cs
+.\ServerAlterTraceEvent.g.cs
+.\ServerObjectGdrEvent.g.cs
+.\ServerObjectManagementEvent.g.cs
+.\ServerObjectTakeOwnershipEvent.g.cs
+.\ServerOperationEvent.g.cs
+.\ServerPrincipalImpersonationEvent.g.cs
+.\ServerPrincipalManagementEvent.g.cs
+.\ServerScopeGdrEvent.g.cs
+.\ServerStartAndStopEvent.g.cs
+.\StatementPermissionEvent.g.cs
+</LastOutputs>
+    </None>
+    <None Include="Trace\Event\EventClassLoaderInfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EventClassLoaderInfo.cs</LastGenOutput>
+      <LastOutputs>
+.\AddDbUserEventLoaderInfo.g.cs
+.\AddLoginEventLoaderInfo.g.cs
+.\AddLoginToServerRoleEventLoaderInfo.g.cs
+.\AddMemberToDbRoleEventLoaderInfo.g.cs
+.\AddRoleEventLoaderInfo.g.cs
+.\AppRoleChangePasswordEventLoaderInfo.g.cs
+.\BackupRestoreEventLoaderInfo.g.cs
+.\BrokerConversationEventLoaderInfo.g.cs
+.\BrokerLoginEventLoaderInfo.g.cs
+.\ChangeAuditEventLoaderInfo.g.cs
+.\ChangeDatabaseOwnerEventLoaderInfo.g.cs
+.\DatabaseManagementEventLoaderInfo.g.cs
+.\DatabaseMirroringLoginEventLoaderInfo.g.cs
+.\DatabaseObjectAccessEventLoaderInfo.g.cs
+.\DatabaseObjectGdrEventLoaderInfo.g.cs
+.\DatabaseObjectManagementEventLoaderInfo.g.cs
+.\DatabaseObjectTakeOwnershipEventLoaderInfo.g.cs
+.\DatabaseOperationEventLoaderInfo.g.cs
+.\DatabasePrincipalImpersonationEventLoaderInfo.g.cs
+.\DatabasePrincipalManagementEventLoaderInfo.g.cs
+.\DatabaseScopeGdrEventLoaderInfo.g.cs
+.\DbccEventLoaderInfo.g.cs
+.\EventClassLoaderInfo.cs
+.\FulltextEventLoaderInfo.g.cs
+.\LoginChangePasswordEventLoaderInfo.g.cs
+.\LoginChangePropertyEventLoaderInfo.g.cs
+.\LoginEventLoaderInfo.g.cs
+.\LoginFailedEventLoaderInfo.g.cs
+.\LoginGdrEventLoaderInfo.g.cs
+.\LogoutEventLoaderInfo.g.cs
+.\ObjectDerivedPermissionEventLoaderInfo.g.cs
+.\SchemaObjectAccessEventLoaderInfo.g.cs
+.\SchemaObjectGdrEventLoaderInfo.g.cs
+.\SchemaObjectManagementEventLoaderInfo.g.cs
+.\SchemaObjectTakeOwnershipEventLoaderInfo.g.cs
+.\ServerAlterTraceEventLoaderInfo.g.cs
+.\ServerObjectGdrEventLoaderInfo.g.cs
+.\ServerObjectManagementEventLoaderInfo.g.cs
+.\ServerObjectTakeOwnershipEventLoaderInfo.g.cs
+.\ServerOperationEventLoaderInfo.g.cs
+.\ServerPrincipalImpersonationEventLoaderInfo.g.cs
+.\ServerPrincipalManagementEventLoaderInfo.g.cs
+.\ServerScopeGdrEventLoaderInfo.g.cs
+.\ServerStartAndStopEventLoaderInfo.g.cs
+.\StatementPermissionEventLoaderInfo.g.cs
+</LastOutputs>
+    </None>
+    <None Include="Trace\Event\EventFactory.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EventFactory.g.cs</LastGenOutput>
+      <LastOutputs>.\EventFactory.g.cs</LastOutputs>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Trace\Event\EventClassesGeneration.xml" />
+    <Content Include="Trace\Event\README_CodeGen.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

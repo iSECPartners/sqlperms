@@ -1,0 +1,38 @@
+﻿<#@ template debug="false" hostspecific="True" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ include file="T4Toolbox.tt" #>
+<#@ include file="EventClass.ttinclude" #>
+
+<#
+var path = TransformationContext.Current.Host.ResolvePath("EventClassesGeneration.xml");
+var classes = ClassFactory.BuildClasses(path, "SqlPermissionsEngine.Trace.Event");
+#>
+using System;
+using System.Collections.Generic;
+
+namespace SqlPermissions.Core.Trace.Event
+{
+    public partial class EventFactory
+    {
+        private static readonly SortedList<String, Tuple<CreateLoader, CreateEvent>> Creation
+            = new SortedList<String, Tuple<CreateLoader, CreateEvent>>
+                  {
+<#	foreach (var cls in classes) { #>
+                      {
+                          "<#= cls.Name #>", 
+                          Tuple.Create(new CreateLoader(record => new <#= cls.ClassName #>LoaderInfo(record)),
+                                       new CreateEvent((record, loadInfoBase) => new <#= cls.ClassName #>(record, loadInfoBase as <#= cls.ClassName #>LoaderInfo)))
+                      },
+<#	} #>
+                  };
+
+        private static readonly SortedList<Int32, String> IdLookup
+            = new SortedList<Int32, String>
+                  {
+<#	foreach (var cls in classes) { #>
+                      { <#= cls.Id #>, "<#= cls.Name #>" },
+<#	} #>
+                  };
+
+	}
+}

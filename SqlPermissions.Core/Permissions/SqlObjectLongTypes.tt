@@ -1,0 +1,150 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ include file="T4Toolbox.tt" #>
+
+<#@ assembly name="System.Data" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Text" #>
+
+<# 
+	var t = new SqlEnumTemplate
+	{
+		IsPublic = true,
+		IsFlags = false,
+		ClassName = "SqlObjectLongTypes",
+		Namespace = "SqlPermissions.Core.Permissions",
+		DocumentationSummary = "Enumeration of the available object types.",
+		ConnectionString = "Data Source=.;Initial Catalog=master;Integrated Security=SSPI;",
+		DefiningQuery = 
+/* @"Select distinct tsv.subclass_value Id, tsv.subclass_name Type, o.type_desc Description
+from sys.trace_subclass_values TSV
+join sys.trace_columns TC on TC.name = 'objecttype'
+						and TC.trace_column_id = TSV.trace_column_id
+left join sys.all_objects o on tsv.subclass_name = o.type collate SQL_Latin1_General_CP1_CI_AS
+order by 1
+",*/
+@"select distinct subclass_value [Id], name [Description], subclass_name [Type] from (select distinct trace_column_id from sys.trace_columns where name = 'ObjectType') c
+	join sys.trace_subclass_values sc on c.trace_column_id = sc.trace_column_id
+	left outer join dbo.spt_values o on sc.subclass_value = o.number 
+	where  o.type = 'EOD'
+	order by 2
+",
+	};
+
+	t.Render();
+#>
+
+<#+
+
+class SqlEnumTemplate : Template
+{
+	public bool IsPublic { get; set; }
+	public bool IsFlags { get; set; }
+	public String ClassName { get; set; }
+	public String Namespace { get; set; }
+	public String DocumentationSummary { get; set; }
+
+	public String DefiningQuery { get; set; }
+	public String ConnectionString { get; set; }
+
+	public IEnumerable<Tuple<String, String>> ReplacementPairs { get; set; }
+
+	private String Cleanup(String input)
+	{
+		if (String.IsNullOrEmpty(input))
+			return input;
+
+		// do any replacements that are specified
+		var replaced = input;
+		if (null != ReplacementPairs)
+		foreach (var pair in ReplacementPairs)
+			replaced = replaced.Replace(pair.Item1, pair.Item2);
+
+		// now remove any leftover invalid tokens
+		var sb = new StringBuilder(replaced.Length);
+
+		// strip invalid tokens from input
+		for (var i = 0; i < replaced.Length; i++)
+		{
+			var c = replaced[i];
+			// we're valid for letters or underscore at any position and numbers at positions after the first
+			var isValid =  
+				(Char.IsLetter(c) || '_' == c
+				|| (0 < i && Char.IsNumber(c)));
+
+			if (isValid)
+				sb.Append(c);
+
+			if (' ' == c)
+				sb.Append('_');
+		}
+
+		return sb.ToString();
+	}
+
+
+	public override String TransformText()
+	{
+
+#>
+using System;
+using System.Collections.Generic;
+
+namespace <#= Namespace #>
+{
+	/// <summary><#= DocumentationSummary #></summary><#= IsFlags ? "[Flags]\n" : String.Empty #>
+	<#= IsPublic ? "public" : "internal" #> static class <#= ClassName #>
+	{
+
+        private static readonly IDictionary<SqlObjectLongType, String> _map = new SortedDictionary<SqlObjectLongType, String>
+            {
+<#+
+		using (var conn = new SqlConnection(ConnectionString))
+		{
+			var cmd = new SqlCommand(DefiningQuery, conn);
+
+			conn.Open();
+			using (var reader = cmd.ExecuteReader())
+			{
+				var hasDocumentation = reader.FieldCount > 2;
+				while (reader.Read()) { #>
+				{ SqlObjectLongType.<#= Cleanup(reader[1] as String) #>, <#= Cleanup(reader[1] as String) #> },
+<#+				}
+			}
+		} #>
+            };
+
+        public static String ToSqlString(this SqlObjectLongType objectLongType)
+        {
+            return _map[objectLongType];
+        }
+
+
+<#+
+		using (var conn = new SqlConnection(ConnectionString))
+		{
+			var cmd = new SqlCommand(DefiningQuery, conn);
+
+			conn.Open();
+			using (var reader = cmd.ExecuteReader())
+			{
+				var hasDocumentation = reader.FieldCount > 2;
+				while (reader.Read()) { #>
+
+		/// <summary><#= hasDocumentation ? Convert.ToString(reader[2]) + " " : String.Empty #>(<#= reader[0] #>)</summary>
+		public const String <#= Cleanup(reader[1] as String) #> = "<#= reader[1] #>";
+<#+				} #>
+	}
+}
+<#+
+
+			}
+		}
+		
+		return GenerationEnvironment.ToString();
+	}
+}
+
+#>

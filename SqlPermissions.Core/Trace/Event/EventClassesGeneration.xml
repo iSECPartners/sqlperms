@@ -1,0 +1,1426 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Generator>
+  <DefiningQuery>
+    <![CDATA[
+-- class definitions
+select 
+	z.Tag
+	, z.Parent
+	, z.ClassId [EventClass!1!Id]
+	, z.Category [EventClass!1!Category]
+	, z.Name  [EventClass!1!Name]
+	, z.Name  [EventClass!1!ClassName]
+	, z.ColId  [Col!2!Id]
+	, z.ColName [Col!2!Name]
+from (
+
+select 
+		1 as Tag
+		, NULL as Parent
+		, e.trace_event_id as ClassId
+		, c.name as Category
+		, e.name as Name
+		, NULL as ColId
+		, NULL as ColName
+	from sys.trace_events e
+	join sys.trace_categories c on e.category_id = c.category_id
+	where c.name = N'Security Audit'
+	
+UNION ALL
+select 
+		2 as Tag
+		, 1 as Parent
+		, e.trace_event_id as ClassId
+		, NULL as Category
+		, NULL as Name
+		, c.trace_column_id
+		, c.name
+	from sys.trace_events e
+	join sys.trace_event_bindings ec on e.trace_event_id = ec.trace_event_id
+	join sys.trace_columns c on ec.trace_column_id = c.trace_column_id
+	join sys.trace_categories cat on e.category_id = cat.category_id
+	where cat.name = N'Security Audit'
+) z
+order by z.ClassId, z.Tag
+for xml explicit
+
+-- Columns query (so we don't have to keep redefining the membername and have discrepencies
+select 
+		c.trace_column_id [@ColId]
+		, c.name [@ColName]
+		, c.Name [@MemberName]
+		, CASE c.name WHEN N'EventSequence' THEN 'bigint' ELSE c.type_name END [@ColType]
+		, case c.type_name when N'nvarchar' then c.max_size /2
+			else c.max_size
+			end [@ColMaxSize]
+	from sys.trace_columns c
+	for xml path ('Column')
+  ]]>
+  </DefiningQuery>
+  <Columns>
+    <Column ColId="1" ColName="TextData" MemberName="TextData" ColType="text" ColMaxSize="1073741824" />
+    <Column ColId="2" ColName="BinaryData" MemberName="BinaryData" ColType="image" ColMaxSize="1073741824" />
+    <Column ColId="3" ColName="DatabaseID" MemberName="DatabaseID" ColType="int" ColMaxSize="4" />
+    <Column ColId="4" ColName="TransactionID" MemberName="TransactionID" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="5" ColName="LineNumber" MemberName="LineNumber" ColType="int" ColMaxSize="4" />
+    <Column ColId="6" ColName="NTUserName" MemberName="NTUserName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="7" ColName="NTDomainName" MemberName="NTDomainName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="8" ColName="HostName" MemberName="HostName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="9" ColName="ClientProcessID" MemberName="ClientProcessID" ColType="int" ColMaxSize="4" />
+    <Column ColId="10" ColName="ApplicationName" MemberName="ApplicationName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="11" ColName="LoginName" MemberName="LoginName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="12" ColName="SPID" MemberName="SPID" ColType="int" ColMaxSize="4" />
+    <Column ColId="13" ColName="Duration" MemberName="Duration" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="14" ColName="StartTime" MemberName="StartTime" ColType="datetime" ColMaxSize="8" />
+    <Column ColId="15" ColName="EndTime" MemberName="EndTime" ColType="datetime" ColMaxSize="8" />
+    <Column ColId="16" ColName="Reads" MemberName="Reads" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="17" ColName="Writes" MemberName="Writes" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="18" ColName="CPU" MemberName="CPU" ColType="int" ColMaxSize="4" />
+    <Column ColId="19" ColName="Permissions" MemberName="Permissions" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="20" ColName="Severity" MemberName="Severity" ColType="int" ColMaxSize="4" />
+    <Column ColId="21" ColName="EventSubClass" MemberName="EventSubClass" ColType="int" ColMaxSize="4" />
+    <Column ColId="22" ColName="ObjectID" MemberName="ObjectID" ColType="int" ColMaxSize="4" />
+    <Column ColId="23" ColName="Success" MemberName="Success" ColType="int" ColMaxSize="4" />
+    <Column ColId="24" ColName="IndexID" MemberName="IndexID" ColType="int" ColMaxSize="4" />
+    <Column ColId="25" ColName="IntegerData" MemberName="IntegerData" ColType="int" ColMaxSize="4" />
+    <Column ColId="26" ColName="ServerName" MemberName="ServerName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="27" ColName="EventClass" MemberName="EventClass" ColType="int" ColMaxSize="4" />
+    <Column ColId="28" ColName="ObjectType" MemberName="ObjectType" ColType="int" ColMaxSize="4" />
+    <Column ColId="29" ColName="NestLevel" MemberName="NestLevel" ColType="int" ColMaxSize="4" />
+    <Column ColId="30" ColName="State" MemberName="State" ColType="int" ColMaxSize="4" />
+    <Column ColId="31" ColName="Error" MemberName="Error" ColType="int" ColMaxSize="4" />
+    <Column ColId="32" ColName="Mode" MemberName="Mode" ColType="int" ColMaxSize="4" />
+    <Column ColId="33" ColName="Handle" MemberName="Handle" ColType="int" ColMaxSize="4" />
+    <Column ColId="34" ColName="ObjectName" MemberName="ObjectName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="35" ColName="DatabaseName" MemberName="DatabaseName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="36" ColName="FileName" MemberName="FileName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="37" ColName="OwnerName" MemberName="OwnerName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="38" ColName="RoleName" MemberName="RoleName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="39" ColName="TargetUserName" MemberName="TargetUserName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="40" ColName="DBUserName" MemberName="DBUserName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="41" ColName="LoginSid" MemberName="LoginSid" ColType="image" ColMaxSize="1073741824" />
+    <Column ColId="42" ColName="TargetLoginName" MemberName="TargetLoginName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="43" ColName="TargetLoginSid" MemberName="TargetLoginSid" ColType="image" ColMaxSize="1073741824" />
+    <Column ColId="44" ColName="ColumnPermissions" MemberName="ColumnPermissions" ColType="int" ColMaxSize="4" />
+    <Column ColId="45" ColName="LinkedServerName" MemberName="LinkedServerName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="46" ColName="ProviderName" MemberName="ProviderName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="47" ColName="MethodName" MemberName="MethodName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="48" ColName="RowCounts" MemberName="RowCounts" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="49" ColName="RequestID" MemberName="RequestID" ColType="int" ColMaxSize="4" />
+    <Column ColId="50" ColName="XactSequence" MemberName="XactSequence" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="51" ColName="EventSequence" MemberName="EventSequence" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="52" ColName="BigintData1" MemberName="BigintData1" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="53" ColName="BigintData2" MemberName="BigintData2" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="54" ColName="GUID" MemberName="GUID" ColType="uniqueidentifier" ColMaxSize="16" />
+    <Column ColId="55" ColName="IntegerData2" MemberName="IntegerData2" ColType="int" ColMaxSize="4" />
+    <Column ColId="56" ColName="ObjectID2" MemberName="ObjectID2" ColType="bigint" ColMaxSize="8" />
+    <Column ColId="57" ColName="Type" MemberName="Type" ColType="int" ColMaxSize="4" />
+    <Column ColId="58" ColName="OwnerID" MemberName="OwnerID" ColType="int" ColMaxSize="4" />
+    <Column ColId="59" ColName="ParentName" MemberName="ParentName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="60" ColName="IsSystem" MemberName="IsSystem" ColType="int" ColMaxSize="4" />
+    <Column ColId="61" ColName="Offset" MemberName="Offset" ColType="int" ColMaxSize="4" />
+    <Column ColId="62" ColName="SourceDatabaseID" MemberName="SourceDatabaseID" ColType="int" ColMaxSize="4" />
+    <Column ColId="63" ColName="SqlHandle" MemberName="SqlHandle" ColType="image" ColMaxSize="1073741824" />
+    <Column ColId="64" ColName="SessionLoginName" MemberName="SessionLoginName" ColType="nvarchar" ColMaxSize="256" />
+    <Column ColId="65" ColName="PlanHandle" MemberName="PlanHandle" ColType="image" ColMaxSize="1073741824" />
+    <Column ColId="66" ColName="GroupID" MemberName="GroupID" ColType="int" ColMaxSize="4" />
+  </Columns>
+  <EventClasses>
+    <EventClass Id="14" Category="Security Audit" Name="Audit Login" ClassName="LoginEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="2" Name="BinaryData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="25" Name="IntegerData" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="57" Name="Type" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+      <Col Id="66" Name="GroupID" />
+    </EventClass>
+    <EventClass Id="15" Category="Security Audit" Name="Audit Logout" ClassName="LogoutEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="13" Name="Duration" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="15" Name="EndTime" />
+      <Col Id="16" Name="Reads" />
+      <Col Id="17" Name="Writes" />
+      <Col Id="18" Name="CPU" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="57" Name="Type" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+      <Col Id="66" Name="GroupID" />
+    </EventClass>
+    <EventClass Id="18" Category="Security Audit" Name="Audit Server Starts And Stops" ClassName="ServerStartAndStopEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="20" Category="Security Audit" Name="Audit Login Failed" ClassName="LoginFailedEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="30" Name="State" />
+      <Col Id="31" Name="Error" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="57" Name="Type" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="102" Category="Security Audit" Name="Audit Database Scope GDR Event" ClassName="DatabaseScopeGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="103" Category="Security Audit" Name="Audit Schema Object GDR Event" ClassName="SchemaObjectGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="44" Name="ColumnPermissions" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="59" Name="ParentName" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="104" Category="Security Audit" Name="Audit Addlogin Event" ClassName="AddLoginEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="105" Category="Security Audit" Name="Audit Login GDR Event" ClassName="LoginGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="106" Category="Security Audit" Name="Audit Login Change Property Event" ClassName="LoginChangePropertyEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="107" Category="Security Audit" Name="Audit Login Change Password Event" ClassName="LoginChangePasswordEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="108" Category="Security Audit" Name="Audit Add Login to Server Role Event" ClassName="AddLoginToServerRoleEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="109" Category="Security Audit" Name="Audit Add DB User Event" ClassName="AddDbUserEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="44" Name="ColumnPermissions" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="110" Category="Security Audit" Name="Audit Add Member to DB Role Event" ClassName="AddMemberToDbRoleEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="111" Category="Security Audit" Name="Audit Add Role Event" ClassName="AddRoleEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="112" Category="Security Audit" Name="Audit App Role Change Password Event" ClassName="AppRoleChangePasswordEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="113" Category="Security Audit" Name="Audit Statement Permission Event" ClassName="StatementPermissionEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="114" Category="Security Audit" Name="Audit Schema Object Access Event" ClassName="SchemaObjectAccessEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="2" Name="BinaryData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="44" Name="ColumnPermissions" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="59" Name="ParentName" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="115" Category="Security Audit" Name="Audit Backup/Restore Event" ClassName="BackupRestoreEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="116" Category="Security Audit" Name="Audit DBCC Event" ClassName="DbccEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="44" Name="ColumnPermissions" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="117" Category="Security Audit" Name="Audit Change Audit Event" ClassName="ChangeAuditEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="44" Name="ColumnPermissions" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="118" Category="Security Audit" Name="Audit Object Derived Permission Event" ClassName="ObjectDerivedPermissionEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="128" Category="Security Audit" Name="Audit Database Management Event" ClassName="DatabaseManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="129" Category="Security Audit" Name="Audit Database Object Management Event" ClassName="DatabaseObjectManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="130" Category="Security Audit" Name="Audit Database Principal Management Event" ClassName="DatabasePrincipalManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="131" Category="Security Audit" Name="Audit Schema Object Management Event" ClassName="SchemaObjectManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="59" Name="ParentName" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="132" Category="Security Audit" Name="Audit Server Principal Impersonation Event" ClassName="ServerPrincipalImpersonationEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="133" Category="Security Audit" Name="Audit Database Principal Impersonation Event" ClassName="DatabasePrincipalImpersonationEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="134" Category="Security Audit" Name="Audit Server Object Take Ownership Event" ClassName="ServerObjectTakeOwnershipEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="135" Category="Security Audit" Name="Audit Database Object Take Ownership Event" ClassName="DatabaseObjectTakeOwnershipEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="152" Category="Security Audit" Name="Audit Change Database Owner" ClassName="ChangeDatabaseOwnerEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="153" Category="Security Audit" Name="Audit Schema Object Take Ownership Event" ClassName="SchemaObjectTakeOwnershipEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="59" Name="ParentName" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="154" Category="Security Audit" Name="Audit Database Mirroring Login" ClassName="DatabaseMirroringLoginEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="30" Name="State" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="36" Name="FileName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="46" Name="ProviderName" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="158" Category="Security Audit" Name="Audit Broker Conversation" ClassName="BrokerConversationEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="20" Name="Severity" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="22" Name="ObjectID" />
+      <Col Id="25" Name="IntegerData" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="30" Name="State" />
+      <Col Id="31" Name="Error" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="52" Name="BigintData1" />
+      <Col Id="54" Name="GUID" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="159" Category="Security Audit" Name="Audit Broker Login" ClassName="BrokerLoginEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="30" Name="State" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="36" Name="FileName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="38" Name="RoleName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="46" Name="ProviderName" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="54" Name="GUID" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="170" Category="Security Audit" Name="Audit Server Scope GDR Event" ClassName="ServerScopeGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="171" Category="Security Audit" Name="Audit Server Object GDR Event" ClassName="ServerObjectGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="172" Category="Security Audit" Name="Audit Database Object GDR Event" ClassName="DatabaseObjectGdrEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="173" Category="Security Audit" Name="Audit Server Operation Event" ClassName="ServerOperationEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="175" Category="Security Audit" Name="Audit Server Alter Trace Event" ClassName="ServerAlterTraceEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="176" Category="Security Audit" Name="Audit Server Object Management Event" ClassName="ServerObjectManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="45" Name="LinkedServerName" />
+      <Col Id="46" Name="ProviderName" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="177" Category="Security Audit" Name="Audit Server Principal Management Event" ClassName="ServerPrincipalManagementEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="5" Name="LineNumber" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="9" Name="ClientProcessID" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="39" Name="TargetUserName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="45" Name="LinkedServerName" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="178" Category="Security Audit" Name="Audit Database Operation Event" ClassName="DatabaseOperationEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="180" Category="Security Audit" Name="Audit Database Object Access Event" ClassName="DatabaseObjectAccessEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="4" Name="TransactionID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="8" Name="HostName" />
+      <Col Id="10" Name="ApplicationName" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="19" Name="Permissions" />
+      <Col Id="23" Name="Success" />
+      <Col Id="26" Name="ServerName" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="28" Name="ObjectType" />
+      <Col Id="29" Name="NestLevel" />
+      <Col Id="34" Name="ObjectName" />
+      <Col Id="35" Name="DatabaseName" />
+      <Col Id="37" Name="OwnerName" />
+      <Col Id="40" Name="DBUserName" />
+      <Col Id="41" Name="LoginSid" />
+      <Col Id="49" Name="RequestID" />
+      <Col Id="50" Name="XactSequence" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+    <EventClass Id="235" Category="Security Audit" Name="Audit Fulltext" ClassName="FulltextEvent">
+      <Col Id="1" Name="TextData" />
+      <Col Id="3" Name="DatabaseID" />
+      <Col Id="6" Name="NTUserName" />
+      <Col Id="7" Name="NTDomainName" />
+      <Col Id="12" Name="SPID" />
+      <Col Id="11" Name="LoginName" />
+      <Col Id="14" Name="StartTime" />
+      <Col Id="21" Name="EventSubClass" />
+      <Col Id="23" Name="Success" />
+      <Col Id="27" Name="EventClass" />
+      <Col Id="31" Name="Error" />
+      <Col Id="42" Name="TargetLoginName" />
+      <Col Id="43" Name="TargetLoginSid" />
+      <Col Id="51" Name="EventSequence" />
+      <Col Id="60" Name="IsSystem" />
+      <Col Id="64" Name="SessionLoginName" />
+    </EventClass>
+  </EventClasses>
+</Generator>
